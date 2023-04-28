@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+// cat 1024.txt | ./tester 2
+// ./tester 2 < 1024.txt > out
+
 int main(int argc, char *argv[])
 {
 	if (argc != 2)
