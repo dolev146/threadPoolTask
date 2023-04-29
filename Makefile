@@ -1,4 +1,7 @@
-all: task stdinExample
+all:queue coder task stdinExample
+
+coder:queue
+	gcc coder.c ./libCodec.so -o coder
 
 task:
 	gcc basic_main.c ./libCodec.so -o encoder
