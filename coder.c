@@ -8,10 +8,6 @@
 #include "myqueue.h"
 #include "codec.h"
 
-#define SERVERPORT 5003
-#define BUFSIZE 4096
-#define SOCKETERROR (-1)
-#define SERVER_BACKLOG 100
 #define THREAD_POOL_SIZE 20
 
 pthread_t thread_pool[THREAD_POOL_SIZE];
