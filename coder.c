@@ -142,7 +142,8 @@ void *thread_function(void *arg)
 {
     while (true)
     {
-        // mutex and cond are designed to work with each other so it is writen like that so that a mutex will not block
+        // mutex and cond are designed to work with each other so it is writen
+        // like that so that a mutex will not block
         // if contition doesnt met
         node_t *node;
         pthread_mutex_lock(&mutex);
