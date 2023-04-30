@@ -49,6 +49,13 @@ int main(int argc, char **argv)
     {
         chosen_function = decrypt;
     }
+    // print all the values in argv
+    printf("printing argv .argc = %d\n", argc);
+    for (int i = 0; i < argc; i++)
+    {
+        printf("%s\n", argv[i]);
+    }
+
 
     // first off we create a bunch of threads
     for (int i = 0; i < THREAD_POOL_SIZE; i++)
@@ -151,7 +158,7 @@ void *thread_function(void *arg)
             if (order == *node->order)
             {
                 node->execute(node->command, *node->key);
-                printf("after execution : %s \n", node->command);
+                printf("%s", node->command);
                 free(node->command);
                 free(node->key);
                 free(node->order);
