@@ -1,12 +1,14 @@
 #ifndef MYQUEUE_H_
 #define MYQUEUE_H_
 
-typedef void (*ExecuteCommand)();
+typedef void (*ExecuteCommand)(char *, int);
 
 struct queuenodedef
 {
     struct queuenodedef *next;
     char *command;
+    int *key;
+    int *order;
     ExecuteCommand execute;
 };
 

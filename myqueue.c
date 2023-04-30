@@ -8,21 +8,17 @@ node_t *tail = NULL;
 
 void enqueue(node_t *node)
 {
-    node_t *newnode = malloc(sizeof(node_t));
-    newnode->command = malloc(1024 * sizeof(char));
-    strcpy(newnode->command, node->command);
-    newnode->execute = node->execute;
-    newnode->next = NULL;
+
+    printf("enqueue %s\n", node->command);
     if (tail == NULL)
     {
-        head = newnode;
+        head = node;
     }
     else
     {
-        tail->next = newnode;
+        tail->next = node;
     }
-    tail = newnode;
-    free(node);
+    tail = node;
 }
 
 // return the value

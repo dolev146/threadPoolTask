@@ -27,6 +27,7 @@ void *thread_function(void *arg);
 
 int main(int argc, char **argv)
 {
+    int order = 0;
     // create a function pointer to store the chosend command
     void (*chosen_function)(char *, int) = NULL;
     if (argc < 3)
@@ -72,8 +73,14 @@ int main(int argc, char **argv)
     {
 
         pthread_mutex_lock(&mutex);
+        order++;
         while ((c = getchar()) != EOF)
         {
+            if (c == EOF || c == '\n' || c == '\r' || c == '\0' || c == '\t' || c == '\v' || c == '\f')
+            {
+                break;
+            }
+
             char *new_data = realloc(data, data_len + 1);
             if (new_data == NULL)
             {
@@ -86,22 +93,8 @@ int main(int argc, char **argv)
             {
                 data = new_data;
                 data[data_len++] = c;
-                printf("data_len: %i\n", data_len);
-                printf("data: %s\n", data);
-                printf("c: %c\n", c);
             }
         }
-
-        // Null-terminate the data array
-        char *new_data = realloc(data, data_len + 1);
-        if (new_data == NULL)
-        {
-            fprintf(stderr, "Error: Memory allocation failed.\n");
-            free(data);
-            exit(EXIT_FAILURE);
-        }
-
-        printf("Data: %s\n", data);
 
         // Split the data into chunks of 1024 and enqueue each chunk separately
         for (int i = 0; i < data_len; i += 1023)
@@ -123,9 +116,14 @@ int main(int argc, char **argv)
                 chunk[1023] = '\0';
             }
 
-            node_t *node = malloc(sizeof(node_t));
-            node->command = malloc(sizeof(char) * 1024);
+            node_t *node = (node_t *)malloc(sizeof(node_t));
+            node->command = (char *)malloc(sizeof(char) * 1024);
+            node->key = (int *)malloc(sizeof(int));
+            node->order = (int *)malloc(sizeof(int));
+            *node->order = order;
             node->execute = chosen_function;
+            *node->key = key;
+            node->next = NULL;
             strcpy(node->command, chunk);
             enqueue(node);
         }
