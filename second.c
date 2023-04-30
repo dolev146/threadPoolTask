@@ -11,6 +11,7 @@
 
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 #define MAX_CHUNK_SIZE 1024
 #define MAX_THREADS 20
@@ -44,7 +45,7 @@ void *producer(void *arg) {
         pthread_cond_signal(&cond);
         pthread_mutex_unlock(&mutex);
 
-        sleep(1);
+        // sleep(1);
     }
 
     return NULL;
@@ -52,10 +53,10 @@ void *producer(void *arg) {
 
 void *consumer(void *arg) {
     while (1) {
-        pthread_mutex_lock(&mutex);
+        pthread_mutex_lock(&mutex2);
 
         while (!data_available) {
-            pthread_cond_wait(&cond, &mutex);
+            pthread_cond_wait(&cond, &mutex2);
         }
 
         node_t *node = dequeue();
@@ -64,7 +65,7 @@ void *consumer(void *arg) {
 
 
 
-        pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&mutex2);
     }
 
     return NULL;
