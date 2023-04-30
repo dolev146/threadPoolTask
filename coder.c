@@ -13,15 +13,16 @@
 pthread_t thread_pool[THREAD_POOL_SIZE];
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t condition_var = PTHREAD_COND_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+bool queue_has_data = false;
 
 char client_message[1024];
 
-int check(int exp, const char *msg);
 void *thread_function(void *arg);
 
 int main(int argc, char **argv)
 {
+
     int order = 0;
     // create a function pointer to store the chosend command
     void (*chosen_function)(char *, int) = NULL;
@@ -49,13 +50,6 @@ int main(int argc, char **argv)
     {
         chosen_function = decrypt;
     }
-    // print all the values in argv
-    printf("printing argv .argc = %d\n", argc);
-    for (int i = 0; i < argc; i++)
-    {
-        printf("%s\n", argv[i]);
-    }
-
 
     // first off we create a bunch of threads
     for (int i = 0; i < THREAD_POOL_SIZE; i++)
@@ -125,14 +119,21 @@ int main(int argc, char **argv)
             node->next = NULL;
             strcpy(node->command, chunk);
             enqueue(node);
+            queue_has_data = 1;
+            pthread_cond_signal(&cond);
+            order++;
         }
 
         free(data);
         data = NULL;
         data_len = 0;
-        pthread_cond_broadcast(&condition_var);
         pthread_mutex_unlock(&mutex);
     }
+    // wait for all threads to finish
+    // for (int i = 0; i < THREAD_POOL_SIZE; i++)
+    // {
+    //     pthread_join(thread_pool[i], NULL);
+    // }
     return 0;
 }
 
@@ -148,22 +149,35 @@ void *thread_function(void *arg)
         pthread_mutex_lock(&mutex);
         if ((node = dequeue()) == NULL)
         {
-            pthread_cond_wait(&condition_var, &mutex);
+            while (!queue_has_data)
+            {
+                pthread_cond_wait(&cond, &mutex);
+            }
             node = dequeue();
+            printf("print dequeue %s\n", node->command);
+            queue_has_data = 0;
             order++;
         }
         pthread_mutex_unlock(&mutex);
         if (node != NULL)
         {
-            if (order == *node->order)
+            while (true)
             {
-                node->execute(node->command, *node->key);
-                printf("%s", node->command);
-                free(node->command);
-                free(node->key);
-                free(node->order);
-                free(node);
-                order++;
+                printf("print order %d\n", order);
+                printf("print node order %d\n", *node->order);
+                printf("print node command %s\n", node->command);
+
+                // if (order == *node->order)
+                // {
+                    node->execute(node->command, *node->key);
+                    printf("print execute %s\n", node->command);
+                    free(node->command);
+                    free(node->key);
+                    free(node->order);
+                    free(node);
+                    order++;
+                    break;
+                // }
             }
         }
     }
