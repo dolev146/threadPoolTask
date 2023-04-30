@@ -27,8 +27,9 @@ void *thread_function(void *arg);
 
 int main(int argc, char **argv)
 {
-
-    if (argc != 3)
+    // create a function pointer to store the chosend command
+    void (*chosen_function)(char *, int) = NULL;
+    if (argc < 3)
     {
         printf("error not valid amount of  arguments need a key and a flag\n");
         printf("for example ./coder 12 -e \n");
@@ -43,6 +44,15 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    // check if the flag is -e or -d
+    if (strcmp(argv[2], "-e") == 0)
+    {
+        chosen_function = encrypt;
+    }
+    else if (strcmp(argv[2], "-d") == 0)
+    {
+        chosen_function = decrypt;
+    }
 
     // first off we create a bunch of threads
     for (int i = 0; i < THREAD_POOL_SIZE; i++)
@@ -50,16 +60,84 @@ int main(int argc, char **argv)
         pthread_create(&thread_pool[i], NULL, thread_function, NULL);
     }
     printf("start... \n");
+
+    int key = atoi(argv[1]);
+    printf("key is %i \n", key);
+
+    char c;
+    char *data = NULL;
+    int data_len = 0;
+
     while (true)
     {
 
-        // int *pclient = (int *)malloc(sizeof(int));
-        // *pclient = client_socket;
         pthread_mutex_lock(&mutex);
-        // enqueue(pclient);
+        while ((c = getchar()) != EOF)
+        {
+            char *new_data = realloc(data, data_len + 1);
+            if (new_data == NULL)
+            {
+                // Handle memory allocation failure
+                fprintf(stderr, "Error: Memory allocation failed.\n");
+                free(data);
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                data = new_data;
+                data[data_len++] = c;
+                printf("data_len: %i\n", data_len);
+                printf("data: %s\n", data);
+                printf("c: %c\n", c);
+            }
+        }
+
+        // Null-terminate the data array
+        char *new_data = realloc(data, data_len + 1);
+        if (new_data == NULL)
+        {
+            fprintf(stderr, "Error: Memory allocation failed.\n");
+            free(data);
+            exit(EXIT_FAILURE);
+        }
+
+        printf("Data: %s\n", data);
+
+        // Split the data into chunks of 1024 and enqueue each chunk separately
+        for (int i = 0; i < data_len; i += 1023)
+        {
+            char chunk[1024];
+            int chunk_size = 1023;
+            if (data_len - i < 1023)
+            {
+                chunk_size = data_len - i;
+            }
+
+            strncpy(chunk, &data[i], chunk_size);
+            if (chunk_size < 1024)
+            {
+                chunk[chunk_size] = '\0';
+            }
+            else
+            {
+                chunk[1023] = '\0';
+            }
+
+            node_t *node = malloc(sizeof(node_t));
+            node->command = malloc(sizeof(char) * 1024);
+            node->execute = chosen_function;
+            strcpy(node->command, chunk);
+            enqueue(node);
+        }
+
+        free(data);
+        data = NULL;
+        data_len = 0;
+
         pthread_cond_signal(&condition_var);
         pthread_mutex_unlock(&mutex);
     }
+    return 0;
 }
 
 void *thread_function(void *arg)
@@ -68,80 +146,24 @@ void *thread_function(void *arg)
     {
         // mutex and cond are designed to work with each other so it is writen like that so that a mutex will not block
         // if contition doesnt met
-        int *pclient;
+        node_t *node;
         pthread_mutex_lock(&mutex);
-        if ((pclient = dequeue()) == NULL)
+        if ((node = dequeue()) == NULL)
         {
             pthread_cond_wait(&condition_var, &mutex);
-            // try again
-            pclient = dequeue();
+            node = dequeue();
         }
         pthread_mutex_unlock(&mutex);
-        if (pclient != NULL)
+        if (node != NULL)
         {
             // we have a connection
-            handle_connection(pclient);
+            handle_connection(node);
         }
     }
 }
 
-void *handle_connection(void *p_client_socket)
+void *handle_connection(void *p_node)
 {
-    int client_socket = *((int *)p_client_socket);
-    free(p_client_socket);
-    // char buffer[BUFSIZE] = "hi from server ";
-    // recv(client_socket, client_message, 1024, 0);
-    // printf("%s", client_message);
-    // send(client_socket, buffer, 1024, 0);
-    // close(client_socket);
+    printf("handle connection \n");
     return NULL;
 }
-
-// #include "codec.h"
-// #include <stdio.h>
-// #include <string.h>
-// #include <stdlib.h>
-
-// // cat 1024.txt | ./tester 2
-// // ./tester 2 < 1024.txt > out
-
-// int main(int argc, char *argv[])
-// {
-// 	if (argc != 2)
-// 	{
-// 	    printf("usage: key < file \n");
-// 	    printf("!! data more than 1024 char will be ignored !!\n");
-// 	    return 0;
-// 	}
-
-// 	int key = atoi(argv[1]);
-// 	printf("key is %i \n",key);
-
-// 	char c;
-// 	int counter = 0;
-// 	int dest_size = 1024;
-// 	char data[dest_size];
-
-// 	while ((c = getchar()) != EOF)
-// 	{
-// 	  data[counter] = c;
-// 	  counter++;
-
-// 	  if (counter == 1024){
-// 		encrypt(data,key);
-// 		printf("encripted data: %s\n",data);
-// 		counter = 0;
-// 	  }
-// 	}
-
-// 	if (counter > 0)
-// 	{
-// 		char lastData[counter];
-// 		lastData[0] = '\0';
-// 		strncat(lastData, data, counter);
-// 		encrypt(lastData,key);
-// 		printf("encripted data:\n %s\n",lastData);
-// 	}
-
-// 	return 0;
-// }
