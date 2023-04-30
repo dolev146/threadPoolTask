@@ -8,4 +8,4 @@ queue:
 
 
 clean:
-	-rm -f encoder tester 2>/dev/null a.out  *.o
+	-rm -f encoder tester 2>/dev/null a.out  *.o coder
