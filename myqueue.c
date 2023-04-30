@@ -31,14 +31,11 @@ node_t *dequeue()
     else
     {
         node_t *result = head;
-        // node_t *temp = head;
         head = head->next;
         if (head == NULL)
         {
             tail = NULL;
         }
-        // free(temp); // TODO: free the memory of the command
-        // i can write here logic to execute the command if i want TODO
         return result;
     }
 }

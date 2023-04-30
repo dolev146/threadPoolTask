@@ -17,7 +17,6 @@ pthread_cond_t condition_var = PTHREAD_COND_INITIALIZER;
 
 char client_message[1024];
 
-void *handle_connection(void *p_client_socket);
 int check(int exp, const char *msg);
 void *thread_function(void *arg);
 
@@ -136,6 +135,7 @@ int main(int argc, char **argv)
 
 void *thread_function(void *arg)
 {
+    int order = 0;
     while (true)
     {
         // mutex and cond are designed to work with each other so it is writen
@@ -146,19 +146,23 @@ void *thread_function(void *arg)
         if ((node = dequeue()) == NULL)
         {
             pthread_cond_wait(&condition_var, &mutex);
+            printf("got signal \n");
             node = dequeue();
+            order++;
         }
         pthread_mutex_unlock(&mutex);
         if (node != NULL)
         {
-            // we have a connection
-            handle_connection(node);
+            if (order == *node->order)
+            {
+                node->execute(node->command, *node->key);
+                printf("after execution : %s \n", node->command);
+                free(node->command);
+                free(node->key);
+                free(node->order);
+                free(node);
+                order++;
+            }
         }
     }
-}
-
-void *handle_connection(void *p_node)
-{
-    printf("handle connection \n");
-    return NULL;
 }
