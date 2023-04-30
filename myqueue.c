@@ -9,7 +9,6 @@ node_t *tail = NULL;
 void enqueue(node_t *node)
 {
 
-    printf("enqueue %s\n", node->command);
     if (tail == NULL)
     {
         head = node;

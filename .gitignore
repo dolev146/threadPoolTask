@@ -6,3 +6,8 @@ indedx.html
 out
 coder
 queue.o
+coder.c
+encoded.txt
+decoded.txt
+out.txt
+test.txt

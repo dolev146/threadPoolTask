@@ -55,11 +55,8 @@ int main(int argc, char **argv)
     {
         pthread_create(&thread_pool[i], NULL, thread_function, NULL);
     }
-    printf("start... \n");
 
     int key = atoi(argv[1]);
-    printf("key is %i \n", key);
-
     char c;
     char *data = NULL;
     int data_len = 0;
@@ -126,8 +123,7 @@ int main(int argc, char **argv)
         free(data);
         data = NULL;
         data_len = 0;
-
-        pthread_cond_signal(&condition_var);
+        pthread_cond_broadcast(&condition_var);
         pthread_mutex_unlock(&mutex);
     }
     return 0;
@@ -146,7 +142,6 @@ void *thread_function(void *arg)
         if ((node = dequeue()) == NULL)
         {
             pthread_cond_wait(&condition_var, &mutex);
-            printf("got signal \n");
             node = dequeue();
             order++;
         }
