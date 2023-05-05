@@ -7,17 +7,82 @@
 #include <pthread.h>
 #include "myqueue.h"
 #include "codec.h"
+#include <errno.h>
 
-int main()
+
+#define MAX_CHAR 1024
+
+
+
+
+int main(int argc, char **argv)
 {
-    long max_threads = sysconf(_SC_THREAD_THREADS_MAX);
+    int key;
 
-    if (max_threads == -1)
+    void (*chosen_function)(char *, int) = NULL;
+    if (argc < 3)
     {
-        printf("Error: The maximum number of threads is indeterminate.\n");
-        return 1;
+        printf("error not valid amount of  arguments need a key and a flag\n");
+        printf("for example ./coder 12 -e \n");
+        return 0;
     }
 
-    printf("Maximum number of threads according to POSIX: %ld\n", max_threads);
-    return 0;
+    // check that the flag is valid (e or d)
+    if (strcmp(argv[2], "-e") != 0 && strcmp(argv[2], "-d") != 0)
+    {
+        printf("error not valid flag\n");
+        printf("for example ./coder 12 -e \n");
+        return 0;
+    }
+
+    // check if the flag is -e or -d
+    if (strcmp(argv[2], "-e") == 0)
+    {
+        chosen_function = &encrypt;
+    }
+    else if (strcmp(argv[2], "-d") == 0)
+    {
+        chosen_function = &decrypt;
+    }
+
+    // check if the key is a number if not print error but if the key is '0' dont throw an error
+    if (atoi(argv[1]) == 0 && strcmp(argv[1], "0") != 0)
+    {
+        printf("error not valid key\n");
+        printf("for example ./coder 12 -e \n");
+        return 0;
+    }
+
+    key = atoi(argv[1]);
+
+
+    // read from stdin and enqueue the input to the queue in chunks of 1024 bytes
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    int count = 0;
+    int i = 0;
+    char *buffer = malloc(MAX_CHAR * sizeof(char));
+    while ((read = getline(&line, &len, stdin)) != -1)
+    {
+        for (i = 0; i < read; i++)
+        {
+            buffer[count] = line[i];
+            count++;
+            if (count == MAX_CHAR)
+            {
+                enqueue(buffer);
+                count = 0;
+                buffer = malloc(MAX_CHAR * sizeof(char));
+            }
+        }
+    } 
+
+    
+
+
+
+
+
+
 }
