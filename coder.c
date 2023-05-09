@@ -9,11 +9,11 @@
 #include "codec.h"
 #include <errno.h>
 
-
 #define MAX_CHAR 1024
 
-
-
+pthread_mutex_t mutexQueue;
+pthread_cond_t condQueue;
+int taskCount = 0;
 
 int main(int argc, char **argv)
 {
@@ -55,34 +55,28 @@ int main(int argc, char **argv)
 
     key = atoi(argv[1]);
 
-
     // read from stdin and enqueue the input to the queue in chunks of 1024 bytes
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
     int count = 0;
-    int i = 0;
     char *buffer = malloc(MAX_CHAR * sizeof(char));
     while ((read = getline(&line, &len, stdin)) != -1)
     {
-        for (i = 0; i < read; i++)
+        for (ssize_t i = 0; i < read; i++)
         {
             buffer[count] = line[i];
             count++;
             if (count == MAX_CHAR)
             {
+                pthread_mutex_lock(&mutexQueue);
                 enqueue(buffer);
+                int taskCount = 0;
+                pthread_mutex_unlock(&mutexQueue);
+                pthread_cond_signal(&condQueue);
                 count = 0;
                 buffer = malloc(MAX_CHAR * sizeof(char));
             }
         }
-    } 
-
-    
-
-
-
-
-
-
+    }
 }
