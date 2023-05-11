@@ -3,8 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-	char data[] = "my text to encrypt";
-	int key = 12;
+	char data[] = "abc";
+	int key = 1;
 
 	encrypt(data,key);
 	printf("encripted data: %s\n",data);

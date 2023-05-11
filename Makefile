@@ -14,7 +14,7 @@ myqueue:
 	gcc -c myqueue.c -o queue.o -Wall -Werror -fpic -g
 
 task:
-	gcc basic_main.c ./libCodec.so -o encoder -g
+	gcc basic_main.c ./libCodec.so -o basic_main -g
 
 stdinExample:
 		gcc stdin_main.c ./libCodec.so -o tester -g
