@@ -1,8 +1,21 @@
 #ifndef MYQUEUE_H_
 #define MYQUEUE_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <unistd.h>
+#include <errno.h>
+#include <time.h>
+
+
 extern pthread_mutex_t mutexQueue;
 extern pthread_cond_t condQueue;
+
+#define THREAD_NUM 20
 
 typedef void (*node_function_ptr)(char *, int);
 

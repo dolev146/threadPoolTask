@@ -11,12 +11,11 @@
 #include <errno.h>
 #include "read_chunks.h"
 
-#define THREAD_NUM 20
+
 #define MAX_CHAR 1024
 
 // Flag for notifying threads to exit
 volatile int exit_flag = 0;
-
 
 pthread_t th[THREAD_NUM];
 
@@ -66,6 +65,13 @@ int main(int argc, char **argv)
     }
 
     key = atoi(argv[1]);
+
+
+    printf("key: %d\n", key);
+    printf("flag: %s\n", argv[2]);
+    
+
+
     read_chunks();
 
     // create a thread pool
@@ -78,6 +84,23 @@ int main(int argc, char **argv)
             exit(1);
         }
     }
+
+
+
+    // wait for all threads to finish
+    for (int i = 0; i < THREAD_NUM; i++)
+    {
+        if (pthread_join(th[i], NULL) != 0)
+        {
+            printf("error joining thread\n");
+            perror("Failed to join thread");
+            exit(1);
+        }
+    }
+
+
+
+
 
     pthread_mutex_destroy(&mutexQueue);
     pthread_cond_destroy(&condQueue);

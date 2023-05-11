@@ -13,6 +13,8 @@
 #include "read_chunks.h"
 
 
+// Flag for notifying threads to exit
+extern volatile int exit_flag;
 
 void *startThread(void *args);
 

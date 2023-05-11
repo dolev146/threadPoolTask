@@ -1,10 +1,7 @@
 #include "startThread.h"
 
-
-
-
-
-void *startThread(void *args){
+void *startThread(void *args)
+{
 
     while (1)
     {
@@ -19,19 +16,9 @@ void *startThread(void *args){
         {
             break;
         }
-        node->fnc_ptr(node->str_input, node->key);
+        node->fnc_ptr(node->str_input, *node->key);
+        printf("Thread %d: %s\n", *(node->order), node->str_input);
         free(node);
     }
     return NULL;
 }
-
-
-
-
-
-
-
-
-
-
-
