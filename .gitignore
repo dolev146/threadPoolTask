@@ -4,3 +4,7 @@ encoder
 tester
 indedx.html
 out
+coder
+*.o
+coder
+queue.o
