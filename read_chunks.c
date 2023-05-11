@@ -41,7 +41,7 @@ void read_chunks()
             memset(buffer, 0, sizeof(char) * CHUNK_SIZE + 1);
         }
     }
-    printf("End of input\n");
+    
 
     // If there are remaining characters less than CHUNK_SIZE, enqueue them
     if (i > 0)

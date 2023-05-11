@@ -8,3 +8,7 @@ coder
 *.o
 coder
 queue.o
+output
+basic_main
+gay
+out2

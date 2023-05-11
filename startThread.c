@@ -17,7 +17,7 @@ void *startThread(void *args)
         while (k <= order){
             if (k == *node->order){
                 pthread_mutex_lock(&mutexQueue);
-                printf("Thread %d: %s\n", *(node->order), node->str_input); 
+                printf("%s", node->str_input); 
                 free(node);
               k++;
               pthread_mutex_unlock(&mutexQueue);
