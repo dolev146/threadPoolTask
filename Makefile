@@ -1,7 +1,11 @@
 all:clean myqueue coder task stdinExample
 
-coder:myqueue
-	gcc coder.c queue.o ./libCodec.so -o coder -Wall -lpthread -g
+coder:myqueue read_chunks
+	gcc coder.c queue.o read_chunks.o ./libCodec.so -o coder -Wall -lpthread -g
+
+read_chunks:
+	gcc -c read_chunks.c -o read_chunks.o -Wall -Werror -fpic -g
+
 
 myqueue:
 	gcc -c myqueue.c -o queue.o -Wall -Werror -fpic -g

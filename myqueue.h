@@ -1,22 +1,25 @@
 #ifndef MYQUEUE_H_
 #define MYQUEUE_H_
 
-typedef void (*ExecuteCommand)(char *, int);
+extern pthread_mutex_t mutexQueue;
+extern pthread_cond_t condQueue;
+
+typedef void (*node_function_ptr)(char *, int);
 
 struct queuenodedef
 {
     struct queuenodedef *next;
-    char *command;
+    char *str_input;
     int *key;
     int *order;
-    ExecuteCommand execute;
+    node_function_ptr fnc_ptr;
 };
-
 typedef struct queuenodedef node_t;
+
 void enqueue(node_t *node);
 node_t *dequeue();
 
-extern node_t *head;
-extern node_t *tail;
+extern node_t *head1;
+extern node_t *tail1;
 
 #endif // MYQUEUE_H

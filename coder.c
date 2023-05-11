@@ -7,19 +7,31 @@
 #include <pthread.h>
 #include "myqueue.h"
 #include "codec.h"
+#include "startThread.h"
 #include <errno.h>
+#include "read_chunks.h"
 
+#define THREAD_NUM 20
 #define MAX_CHAR 1024
+
+// Flag for notifying threads to exit
+volatile int exit_flag = 0;
+
+
+pthread_t th[THREAD_NUM];
 
 pthread_mutex_t mutexQueue;
 pthread_cond_t condQueue;
-int taskCount = 0;
+
+void (*chosen_function)(char *, int) = NULL;
+int order = 0;
+int key = 0;
 
 int main(int argc, char **argv)
 {
-    int key;
+    pthread_mutex_init(&mutexQueue, NULL);
+    pthread_cond_init(&condQueue, NULL);
 
-    void (*chosen_function)(char *, int) = NULL;
     if (argc < 3)
     {
         printf("error not valid amount of  arguments need a key and a flag\n");
@@ -54,29 +66,21 @@ int main(int argc, char **argv)
     }
 
     key = atoi(argv[1]);
+    read_chunks();
 
-    // read from stdin and enqueue the input to the queue in chunks of 1024 bytes
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-    int count = 0;
-    char *buffer = malloc(MAX_CHAR * sizeof(char));
-    while ((read = getline(&line, &len, stdin)) != -1)
+    // create a thread pool
+    for (int i = 0; i < THREAD_NUM; i++)
     {
-        for (ssize_t i = 0; i < read; i++)
+        if (pthread_create(&th[i], NULL, &startThread, NULL) != 0)
         {
-            buffer[count] = line[i];
-            count++;
-            if (count == MAX_CHAR)
-            {
-                pthread_mutex_lock(&mutexQueue);
-                enqueue(buffer);
-                int taskCount = 0;
-                pthread_mutex_unlock(&mutexQueue);
-                pthread_cond_signal(&condQueue);
-                count = 0;
-                buffer = malloc(MAX_CHAR * sizeof(char));
-            }
+            printf("error creating thread\n");
+            perror("Failed to create thread");
+            exit(1);
         }
     }
+
+    pthread_mutex_destroy(&mutexQueue);
+    pthread_cond_destroy(&condQueue);
+
+    return 0;
 }

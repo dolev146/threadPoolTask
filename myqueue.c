@@ -3,40 +3,37 @@
 #include <stdio.h>
 #include <string.h>
 
-node_t *head = NULL;
-node_t *tail = NULL;
+node_t *head1 = NULL;
+node_t *tail1 = NULL;
 
 void enqueue(node_t *node)
 {
-    if (tail == NULL)
+    if (tail1 == NULL)
     {
-        head = node;
+        head1 = node;
     }
     else
     {
-        tail->next = node;
+        tail1->next = node;
     }
-    tail = node;
+    tail1 = node;
 }
 
 // return the value
 node_t *dequeue()
 {
-    if (head == NULL)
+    if (head1 == NULL)
     {
         return NULL;
     }
     else
     {
-        node_t *result = head;
-        head = head->next;
-        if (head == NULL)
+        node_t *result = head1;
+        head1 = head1->next;
+        if (head1 == NULL)
         {
-            tail = NULL;
+            tail1 = NULL;
         }
         return result;
     }
 }
-
-
-
