@@ -17,9 +17,9 @@ void *startThread(void *args)
             break;
         }
         node->fnc_ptr(node->str_input, *node->key);
-        while (k < order){
+        while (k <= order){
             if (k == *node->order){
-                 pthread_mutex_lock(&mutexQueue);
+                pthread_mutex_lock(&mutexQueue);
                 printf("Thread %d: %s\n", *(node->order), node->str_input); 
                 free(node);
               k++;
@@ -29,6 +29,8 @@ void *startThread(void *args)
           
 
         }
+    
+     
 
         
     }
