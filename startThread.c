@@ -1,5 +1,5 @@
 #include "startThread.h"
-    int k = 0;
+int k = 0;
 void *startThread(void *args)
 {
 
@@ -7,29 +7,32 @@ void *startThread(void *args)
     {
         pthread_mutex_lock(&mutexQueue);
 
+        while (head1 == NULL)
+        {
+            printf("waiting\n");
+            pthread_cond_wait(&condQueue, &mutexQueue);
+        }
         node_t *node = dequeue();
+        printf("dequeue\n");
+        printf("%s", node->str_input);
         pthread_mutex_unlock(&mutexQueue);
         if (node == NULL)
         {
             break;
         }
         node->fnc_ptr(node->str_input, *node->key);
-        while (k <= order){
-            if (k == *node->order){
+        while (k <= order)
+        {
+            if (k == *node->order)
+            {
                 pthread_mutex_lock(&mutexQueue);
-                printf("%s", node->str_input); 
+                printf("%s", node->str_input);
                 free(node);
-              k++;
-              pthread_mutex_unlock(&mutexQueue);
-              break;
+                k++;
+                pthread_mutex_unlock(&mutexQueue);
+                break;
             }
-          
-
         }
-    
-     
-
-        
     }
     return NULL;
 }

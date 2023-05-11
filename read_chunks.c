@@ -17,14 +17,15 @@ void read_chunks()
     int i = 0;
     while ((c = getchar()))
     {
-        if (c == EOF || c == '\n')
+        if (c == EOF)
         {
             break;
         }
         buffer[i++] = c;
 
-        if (i == CHUNK_SIZE)
+        if (i == CHUNK_SIZE || c == '\n')
         {
+            pthread_mutex_lock(&mutexQueue);
             buffer[i] = '\0';
             node_t *node = malloc(sizeof(node_t));
             node->key = malloc(sizeof(int));
@@ -35,17 +36,20 @@ void read_chunks()
             *(node->key) = key;
             *(node->order) = order;
             enqueue(node);
+            printf("enqueue\n");
             i = 0; // reset index
             order++;
             // clean the buffer
             memset(buffer, 0, sizeof(char) * CHUNK_SIZE + 1);
+            pthread_mutex_unlock(&mutexQueue);
+            pthread_cond_signal(&condQueue);
         }
     }
-    
 
     // If there are remaining characters less than CHUNK_SIZE, enqueue them
     if (i > 0)
     {
+        pthread_mutex_lock(&mutexQueue);
         buffer[i] = '\0';
         node_t *node = malloc(sizeof(node_t));
         node->key = malloc(sizeof(int));
@@ -55,9 +59,13 @@ void read_chunks()
         strcpy(node->str_input, buffer);
         *(node->key) = key;
         *(node->order) = order;
-
         enqueue(node);
-
+        printf("enqueue\n");
+        order++;
+        // clean the buffer
+        memset(buffer, 0, sizeof(char) * CHUNK_SIZE + 1);
+        pthread_mutex_unlock(&mutexQueue);
+        pthread_cond_signal(&condQueue);
     }
 
     free(buffer);

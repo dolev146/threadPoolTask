@@ -20,4 +20,4 @@ stdinExample:
 		gcc stdin_main.c ./libCodec.so -o tester -g
 
 clean:
-	-rm -f encoder tester 2>/dev/null a.out main *.o coder
+	-rm -f encoder tester 2>/dev/null a.out main *.o coder 

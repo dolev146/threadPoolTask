@@ -11,7 +11,6 @@
 #include <errno.h>
 #include "read_chunks.h"
 
-
 #define MAX_CHAR 1024
 
 // Flag for notifying threads to exit
@@ -66,12 +65,6 @@ int main(int argc, char **argv)
 
     key = atoi(argv[1]);
 
-
-    
-
-
-    read_chunks();
-
     // create a thread pool
     for (int i = 0; i < THREAD_NUM; i++)
     {
@@ -83,7 +76,7 @@ int main(int argc, char **argv)
         }
     }
 
-
+    read_chunks();
 
     // wait for all threads to finish
     for (int i = 0; i < THREAD_NUM; i++)
@@ -95,10 +88,6 @@ int main(int argc, char **argv)
             exit(1);
         }
     }
-
-
-
-
 
     pthread_mutex_destroy(&mutexQueue);
     pthread_cond_destroy(&condQueue);
