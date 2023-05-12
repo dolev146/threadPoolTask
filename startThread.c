@@ -23,7 +23,7 @@ void *startThread(void *args)
         if (strcmp(node->str_input, "senital") == 0)
         {
             pthread_mutex_lock(&mutexQueue);
-            printf("Thread dies %d: %s\n", *(node->order), node->str_input);
+            // printf("Thread dies %d: %s\n", *(node->order), node->str_input);
             pthread_mutex_unlock(&mutexQueue);
             break;
         }
@@ -34,7 +34,7 @@ void *startThread(void *args)
             if (k == *node->order)
             {
                 pthread_mutex_lock(&mutexQueue);
-                printf("Thread %d: %s\n", *(node->order), node->str_input);
+                printf("%s", node->str_input);
                 free(node);
                 k++;
                 pthread_mutex_unlock(&mutexQueue);

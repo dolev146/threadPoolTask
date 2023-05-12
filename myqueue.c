@@ -8,6 +8,11 @@ node_t *tail1 = NULL;
 
 void enqueue(node_t *node)
 {
+    if (node == NULL)
+    {
+        return;
+    }
+    node->next = NULL;
     if (tail1 == NULL)
     {
         head1 = node;

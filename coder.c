@@ -65,8 +65,8 @@ int main(int argc, char **argv)
 
     key = atoi(argv[1]);
 
-    printf("key: %d\n", key);
-    printf("flag: %s\n", argv[2]);
+    // printf("key: %d\n", key);
+    // printf("flag: %s\n", argv[2]);
 
     // create a thread pool
     for (int i = 0; i < THREAD_NUM; i++)

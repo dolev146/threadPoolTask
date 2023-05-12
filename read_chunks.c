@@ -27,7 +27,7 @@ void read_chunks()
         {
             // mutex lock
             // pthread_mutex_lock(&mutexQueue);
-            printf("got inside i: %d\n", i);
+            // printf("got inside i: %d\n", i);
             buffer[i] = '\0';
             node_t *node = malloc(sizeof(node_t));
             node->key = malloc(sizeof(int));
@@ -48,7 +48,7 @@ void read_chunks()
             pthread_cond_signal(&condQueue);
         }
     }
-    printf("End of input\n");
+    // printf("End of input\n");
 
     // If there are remaining characters less than CHUNK_SIZE, enqueue them
     if (i > 0)
@@ -87,7 +87,7 @@ void read_chunks()
         strcpy(node->str_input, "senital");
         *(node->key) = 0;
         *(node->order) = x;
-        printf("inserting senital %d\n", x);
+        // printf("inserting senital %d\n", x);
         enqueue(node);
         // mutex unlock
         // pthread_mutex_unlock(&mutexQueue);
