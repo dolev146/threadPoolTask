@@ -8,3 +8,4 @@ coder
 *.o
 coder
 queue.o
+basic_main
