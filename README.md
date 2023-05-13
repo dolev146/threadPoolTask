@@ -46,8 +46,9 @@ This will compile the code and generate the executable file named coder.
 # Usage
 The general syntax for executing the program is as follows:
 
+```
 ./coder key [-e/-d]
-
+```
 
 Where:
 
@@ -83,6 +84,10 @@ You can also provide input from a file. To do this, use the < operator followed 
 ```
 
 
+## Authors
+
+- [@ Dolev Dublon](https://github.com/dolev146)
+- [@ Yakov Khodorkovski](https://github.com/yakov103)
 
 
 
