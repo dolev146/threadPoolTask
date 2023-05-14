@@ -107,6 +107,8 @@ int main(int argc, char **argv)
 
     pthread_mutex_destroy(&mutexQueue);
     pthread_cond_destroy(&condQueue);
+
+
     free(th);
     return 0;
 }

@@ -35,6 +35,11 @@ void *startThread(void *args)
             {
                 pthread_mutex_lock(&mutexQueue);
                 printf("%s", node->str_input);
+                // free all the things inside the node
+                free(node->str_input);
+                free(node->order);
+                free(node->key);
+                
                 free(node);
                 k++;
                 pthread_mutex_unlock(&mutexQueue);
