@@ -32,14 +32,14 @@ int key = 0;
 int main(int argc, char **argv)
 {
     cpu_count = sysconf(_SC_NPROCESSORS_CONF);
-    THREAD_NUM = 12;
+    THREAD_NUM = cpu_count;
     th = malloc(sizeof(pthread_t) * THREAD_NUM);
     if (th == NULL)
     {
         perror("Failed to allocate memory for threads");
         exit(1);
     }
-    printf("CPU count: %d\n", cpu_count);
+    // printf("CPU count: %d\n", cpu_count);
     pthread_mutex_init(&mutexQueue, NULL);
     pthread_cond_init(&condQueue, NULL);
 
