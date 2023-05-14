@@ -25,6 +25,11 @@ void *startThread(void *args)
             pthread_mutex_lock(&mutexQueue);
             // printf("Thread dies %d: %s\n", *(node->order), node->str_input);
             pthread_mutex_unlock(&mutexQueue);
+            // Free the sentinel node before breaking the loop
+            free(node->str_input);
+            free(node->order);
+            free(node->key);
+            free(node);
             break;
         }
 
@@ -39,7 +44,7 @@ void *startThread(void *args)
                 free(node->str_input);
                 free(node->order);
                 free(node->key);
-                
+
                 free(node);
                 k++;
                 pthread_mutex_unlock(&mutexQueue);
