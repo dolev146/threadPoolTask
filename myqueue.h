@@ -15,7 +15,7 @@
 extern pthread_mutex_t mutexQueue;
 extern pthread_cond_t condQueue;
 
-#define THREAD_NUM 20
+extern int THREAD_NUM; 
 
 typedef void (*node_function_ptr)(char *, int);
 

@@ -8,15 +8,19 @@
 #include "myqueue.h"
 #include "codec.h"
 #include "startThread.h"
+#include <stdio.h>
+#include <unistd.h>
 #include <errno.h>
 #include "read_chunks.h"
 
 #define MAX_CHAR 1024
 
+int cpu_count;
+int THREAD_NUM;
+pthread_t *th;
+
 // Flag for notifying threads to exit
 volatile int exit_flag = 0;
-
-pthread_t th[THREAD_NUM];
 
 pthread_mutex_t mutexQueue;
 pthread_cond_t condQueue;
@@ -27,6 +31,15 @@ int key = 0;
 
 int main(int argc, char **argv)
 {
+    cpu_count = sysconf(_SC_NPROCESSORS_CONF);
+    THREAD_NUM = cpu_count;
+    th = malloc(sizeof(pthread_t) * THREAD_NUM);
+    if (th == NULL)
+    {
+        perror("Failed to allocate memory for threads");
+        exit(1);
+    }
+    // printf("CPU count: %d\n", cpu_count);
     pthread_mutex_init(&mutexQueue, NULL);
     pthread_cond_init(&condQueue, NULL);
 
@@ -95,5 +108,7 @@ int main(int argc, char **argv)
     pthread_mutex_destroy(&mutexQueue);
     pthread_cond_destroy(&condQueue);
 
+
+    free(th);
     return 0;
 }
