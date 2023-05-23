@@ -32,7 +32,7 @@ int key = 0;
 int main(int argc, char **argv)
 {
     cpu_count = sysconf(_SC_NPROCESSORS_CONF);
-    THREAD_NUM = cpu_count;
+    THREAD_NUM = 40;
     th = malloc(sizeof(pthread_t) * THREAD_NUM);
     if (th == NULL)
     {
